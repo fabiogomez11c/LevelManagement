@@ -1,7 +1,7 @@
 
 from queue import Queue
 from events import OrderEvent, FillEvent, SignalEvent
-from data import KibotDataHandler
+from data import CSVReader
 from strategy import LongStrategy, PARAMS
 import pandas as pd
 import numpy as np
@@ -15,17 +15,12 @@ warnings.filterwarnings('ignore')
 
 class Backtester:
 
-    def __init__(self, symbols: List, from_to=None):
-        self.from_to = from_to
-        self.symbol_list = symbols
+    def __init__(self):
 
         # Reset the initial parameters
         self.open_trades = {}
         self.closed_trades = []
         self.event = None
-
-        self.amount = None
-        self.running_amount = None
 
         self.trades = pd.DataFrame()
 
@@ -41,11 +36,8 @@ class Backtester:
         # create the queue object
         self.event = Queue()
 
-        self.amount = 100000
-        self.running_amount = self.amount
-
         # import the historical data and clean it
-        self.data = KibotDataHandler(self.event, self.symbol_list, self.from_to)
+        self.data = CSVReader(self.event)
 
         # cleaning some properties
         self.open_trades = dict((k, {}) for k in self.data.symbol_list)
