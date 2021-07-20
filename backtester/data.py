@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 import yfinance as yf
-from events import MarketEvent
+from backtester.events import MarketEvent
 
 
 class CSVReader:
@@ -51,6 +51,7 @@ class CSVReader:
 
         # convert date column into dates
         df['date'] = pd.to_datetime(df['date'], format="%Y-%m-%dT%H:%M:%SZ")
+        df = df.set_index('date', drop=True)
 
         # fill empty values and cleaning
         df = df[pd.to_numeric(df['close'], errors='coerce').notnull()]
@@ -60,7 +61,6 @@ class CSVReader:
         self._compute_indicators(df)
 
         # clean the information for the backtester
-        df.index = df.index.tz_localize(None)  # removing the tz
         self.data_df = df.copy()  # storing in other property the dataframe
         self.data = df.iterrows()  # creating the iter object
     
@@ -133,13 +133,13 @@ class CSVReader:
                         mkt_data[1][1],  # high
                         mkt_data[1][2],  # low
                         mkt_data[1][3],  # close
-                        mkt_data[1][5],  # c/r fib
-                        mkt_data[1][6],  # c/r fast
-                        mkt_data[1][7],  # fib_pred
-                        mkt_data[1][8],  # fast_pred
-                        mkt_data[1][9],  # fast_ma
-                        mkt_data[1][10],  # slow_pred
-                        mkt_data[1][11]],  # high_pred
+                        mkt_data[1][4],  # c/r fib
+                        mkt_data[1][5],  # c/r fast
+                        mkt_data[1][6],  # fib_pred
+                        mkt_data[1][7],  # fast_pred
+                        mkt_data[1][8],  # fast_ma
+                        mkt_data[1][9],  # slow_pred
+                        mkt_data[1][10]],  # high_pred
                         )
 
     def get_latest_bars(self, N=1):
