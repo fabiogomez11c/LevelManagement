@@ -33,11 +33,22 @@ class CSVReader:
         "method": 1
     }
 
-    def __init__(self, events: Queue):
+    timeframe = '1D'
+
+    def __init__(self, events: Queue, from_date: str = '', to_date:str = '', time_frame:str = '1D'):
 
         self.events = events
         self.latest_symbol_data = []
         self.continue_backtest = True
+        self.from_date = from_date
+        if self.from_date is None:
+            self.from_date = ''
+        self.to_date = to_date
+        if self.to_date is None:
+            self.to_date = ''
+        self.timeframe = time_frame
+        if self.timeframe is None:
+            self.timeframe = '1D'
 
         self._get_data()
 
@@ -56,6 +67,20 @@ class CSVReader:
         # fill empty values and cleaning
         df = df[pd.to_numeric(df['close'], errors='coerce').notnull()]
         df = df.fillna(method='ffill')
+
+        # time frame conversion
+        df = df.resample(self.timeframe).agg({
+            'open': 'first',
+            'high': 'max',
+            'low': 'min',
+            'close': 'last'
+        }).fillna(method='ffill')
+
+        # filtering by date
+        if self.from_date != '':
+            df = df.loc[df.index >= self.from_date]
+        if self.to_date != '':
+            df = df.loc[df.index <= self.to_date]
 
         # compute indicators
         self._compute_indicators(df)

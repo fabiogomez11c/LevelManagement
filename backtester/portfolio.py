@@ -1,7 +1,6 @@
 
 from queue import Queue
 
-from numpy.core.fromnumeric import size
 from backtester.events import OrderEvent, FillEvent, SignalEvent, MarketEvent
 from backtester.data import CSVReader
 from backtester.strategy import Strategy
@@ -22,7 +21,7 @@ class Backtester:
 
     commision = 0.002
 
-    def __init__(self):
+    def __init__(self, from_date: str = '', to_date: str = '', time_frame : str = '1D'):
 
         # Reset the initial parameters
         self.open_trades = {}
@@ -38,7 +37,7 @@ class Backtester:
         self.event = Queue()
 
         # import the historical data and clean it
-        self.data = CSVReader(self.event)
+        self.data = CSVReader(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame)
 
     def run_backtest(self):
         """

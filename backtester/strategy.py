@@ -30,13 +30,20 @@ class Strategy:
 
             if len(bars) < 2:
                 return
+            
+            fib_pred = bars[-1][7]
+            fib_pred_t_1 = bars[-2][7]
+            fast_pred = bars[-1][8]
+            fast_pred_t_1 = bars[-2][8]
+            high_pred = bars[-1][11]
+            high_pred_t_1 = bars[-2][11]
 
             # if we don't have any open position
             if len(self.CurrentPosition) == 0:
 
                 # check the buy condition
-                if bars[-1][7] > bars[-1][8] and bars[-2][7] < bars[-2][8] \
-                    and bars[-1][7] > bars[-1][11] and bars[-2][7] < bars[-2][11]:
+                if fib_pred > fast_pred and fib_pred_t_1 < fast_pred_t_1 \
+                    and fib_pred > high_pred and fib_pred_t_1 < high_pred_t_1:
 
                     # create a buy order
                     information = {
@@ -56,8 +63,8 @@ class Strategy:
             else:
 
                 # check the close condition
-                if bars[-1][7] < bars[-1][8] and bars[-2][7] > bars[-2][8] \
-                    and bars[-1][7] < bars[-1][11] and bars[-2][7] > bars[-2][11]:
+                if fib_pred < fast_pred and fib_pred_t_1 > fast_pred_t_1 \
+                    and fib_pred < high_pred and fib_pred_t_1 > high_pred_t_1:
 
                     # create a sell order
                     information = {
