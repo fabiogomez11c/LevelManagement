@@ -24,5 +24,3 @@ if __name__ == '__main__':
     engine.run_backtest()
 
     engine.create_report()
-
-    print(engine.data.data_df.tail())
