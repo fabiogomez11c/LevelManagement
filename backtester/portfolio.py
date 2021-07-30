@@ -2,7 +2,7 @@
 from queue import Queue
 
 from backtester.events import OrderEvent, FillEvent, SignalEvent, MarketEvent
-from backtester.data import CSVReader
+from backtester.data import CSVReader, TwelveData
 from backtester.strategy import Strategy
 import pandas as pd
 import numpy as np
@@ -21,9 +21,10 @@ class Backtester:
 
     commision = 0.002
 
-    def __init__(self, from_date: str = '', to_date: str = '', time_frame : str = '1D'):
+    def __init__(self, from_date: str = '', to_date: str = '', time_frame : str = '1D', symbol = 'AAPL'):
 
         # Reset the initial parameters
+        self.symbol = symbol
         self.open_trades = {}
         self.closed_trades = []
         self.event = None
@@ -37,7 +38,9 @@ class Backtester:
         self.event = Queue()
 
         # import the historical data and clean it
-        self.data = CSVReader(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame)
+        # self.data = CSVReader(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame)
+        self.data = TwelveData(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame,
+            symbol=self.symbol)
 
     def run_backtest(self):
         """
