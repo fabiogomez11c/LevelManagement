@@ -151,6 +151,11 @@ class Backtester:
         report = {}
         self.trades = pd.DataFrame(self.closed_trades)
 
+        if len(self.trades) == 0:
+            print()
+            print("There isn't any trade, try a different set of parameters.")
+            return
+
         # returns
         returns = self.portfolio_returns
         returns = np.array(returns) + 1
