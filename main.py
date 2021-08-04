@@ -24,16 +24,16 @@ if __name__ == '__main__':
 
 
     from_date = args.datestart
-    # from_date = '2016-01-01'
+    # from_date = '2021-01-01'
 
     to_date = args.dateend
-    # to_date = '2020-12-31'
+    # to_date = '2021-04-21'
 
     time_frame = args.candle
-    # time_frame = '1h'
+    # time_frame = '4h'
 
     symbol = args.pairset
-    # symbol = 'BTC/ETH'
+    # symbol = 'LINK/USD'
 
     if from_date is None or to_date is None or time_frame is None or symbol is None:
         raise NotImplementedError('One or more parameters were not defined')
@@ -43,3 +43,5 @@ if __name__ == '__main__':
     engine.run_backtest()
 
     engine.create_report()
+
+    print('Done')

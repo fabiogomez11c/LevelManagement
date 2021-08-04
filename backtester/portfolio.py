@@ -30,6 +30,7 @@ class Backtester:
         self.event = None
         self.trade_id = 1
         self.portfolio_returns = []
+        self.buy_hold_returns = []
         self.returns_dates = []
 
         self.trades = pd.DataFrame()
@@ -98,6 +99,8 @@ class Backtester:
         close = bars[-1][4]
         close_t_1 = bars[-2][4]
 
+        self.buy_hold_returns.append(close/close_t_1 - 1)
+
         self.returns_dates.append(bars[-1][0])
 
         if len(self.open_trades) == 0:
@@ -161,11 +164,15 @@ class Backtester:
         returns = np.array(returns) + 1
         returns = np.cumprod(returns)
 
+        market_returns = self.buy_hold_returns
+        market_returns = np.array(market_returns) + 1
+        market_returns = np.cumprod(market_returns)
+
         # Total trades
         report['Number of Trades'] = len(self.closed_trades)
 
         # Total profit or loss
-        report['Total Return (%)'] = returns[-1] * 100 - (report['Number of Trades'] * self.commision * 100)
+        report['Total Return (%)'] = (returns[-1] - 1) * 100 - (report['Number of Trades'] * self.commision * 100)
 
         # Total positive trades
         temp = self.trades.loc[self.trades['Profit/Loss in %'] > 0]
@@ -185,7 +192,9 @@ class Backtester:
         print(pd.DataFrame(report, index=['Values']).T)
 
         # Ploting
-        temp = pd.DataFrame(returns, columns=['Cumulative Return'], index=self.returns_dates)
+        temp = pd.DataFrame([returns, market_returns]).T
+        temp.index = self.returns_dates
+        temp.columns = ['Cumulative Return', 'Market Returns']
         temp.plot(figsize=(10,10))
         plt.show()
 
