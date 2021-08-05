@@ -174,6 +174,9 @@ class Backtester:
         # Total profit or loss
         report['Total Return (%)'] = (returns[-1] - 1) * 100 - (report['Number of Trades'] * self.commision * 100)
 
+        # Total market return
+        report['Market Return (%)'] = (market_returns[-1] - 1) * 100
+
         # Total positive trades
         temp = self.trades.loc[self.trades['Profit/Loss in %'] > 0]
         report['Positive Trades'] = len(temp)
