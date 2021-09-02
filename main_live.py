@@ -1,4 +1,5 @@
-
+from livetrading.engine import LiveTrading
 
 if __name__ == "__main__":
-    pass
+    
+    engine = LiveTrading()
