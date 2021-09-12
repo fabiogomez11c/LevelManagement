@@ -1,5 +1,6 @@
 import binance
 import queue
+import time
 
 from livetrading.data import BinanceReader
 
@@ -28,6 +29,8 @@ class LiveTrading:
     def run(self):
 
         while True:
+
+            time.sleep(1)
 
             # request data
             self.data.get_data()

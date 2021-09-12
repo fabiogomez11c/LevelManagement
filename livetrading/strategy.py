@@ -9,13 +9,10 @@ from typing import ClassVar, Tuple
 
 class Strategy:
 
-    def __init__(self, events: Queue, data: CSVReader):
+    def __init__(self, events: Queue):
 
         # store the parameters
         self.events = events
-        self.data = data
-
-        self.quantity = 100
 
         # initial values in the strategy
         self.CurrentPosition = []
