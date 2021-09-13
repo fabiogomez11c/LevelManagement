@@ -9,6 +9,7 @@ class LiveTrading:
     def __init__(self, timeframe, symbol) -> None:
 
         self.event = queue.Queue()
+        self.last_datetime = None
         
         self.client = binance.Client(
             "fqg1ttuR45eWNLVBegJ41walQ6KksxvjTRLZeXaDHXIe8Q7TkxiYcBu8JpXzbOb9",
@@ -22,9 +23,16 @@ class LiveTrading:
             time_frame=timeframe,
             symbol=symbol
         )
+        self._update_last_datetime()
 
         # create the strategy handler
         print('Strategy here')
+    
+    def _update_last_datetime(self):
+        self.last_datetime = self.data.data.iloc[-1][0]
+    
+    def _check_last_datetime(self):
+        return self.last_datetime == self.data.data.iloc[-1][0]
     
     def run(self):
 
@@ -34,6 +42,11 @@ class LiveTrading:
 
             # request data
             self.data.get_data()
+
+            # check if we already have new data
+            if self._check_last_datetime():
+                continue
+            self._update_last_datetime()
 
             # get the existing positions
 
