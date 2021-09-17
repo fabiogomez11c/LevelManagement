@@ -1,11 +1,4 @@
 
-from queue import Queue
-
-import numpy as np
-import pandas as pd
-import datetime as dt
-from typing import ClassVar, Tuple
-
 
 class Strategy:
 
@@ -14,26 +7,26 @@ class Strategy:
         # store the parameters
         self.parent = parent
 
-        # initial values in the strategy
-        self.CurrentPosition = []
+    def compute_signal(self, position):
 
-    def compute_signal(self):
+        information = None
 
         # get the bars needed
-        bars = self.data.get_latest_bars(2)
+        bars = self.parent.data.data.iloc[-2:].to_numpy()
+        # bars = self.data.get_latest_bars(2)
 
         if len(bars) < 2:
             return
         
-        fib_pred = bars[-1][7]
-        fib_pred_t_1 = bars[-2][7]
-        fast_pred = bars[-1][8]
-        fast_pred_t_1 = bars[-2][8]
-        high_pred = bars[-1][11]
-        high_pred_t_1 = bars[-2][11]
+        fib_pred = bars[-1][7 + 1]
+        fib_pred_t_1 = bars[-2][7 + 1]
+        fast_pred = bars[-1][8 + 1]
+        fast_pred_t_1 = bars[-2][8 + 1]
+        high_pred = bars[-1][11 + 1]
+        high_pred_t_1 = bars[-2][11 + 1]
 
         # if we don't have any open position
-        if len(self.CurrentPosition) == 0:
+        if position == 0:
 
             # check the buy condition
             if fib_pred > fast_pred and fib_pred_t_1 < fast_pred_t_1 \
@@ -41,17 +34,10 @@ class Strategy:
 
                 # create a buy order
                 information = {
-                    'datetime': bars[-1][0],
-                    'price': bars[-1][4],
                     'type': 'Long'
                 }
 
-                # send the buy order
-                signal = SignalEvent(information=information)
-                self.events.put(signal)
-
-                # update current position
-                self.CurrentPosition = [information]
+                return information
 
         # if we have an open position
         else:
@@ -62,14 +48,7 @@ class Strategy:
 
                 # create a sell order
                 information = {
-                    'datetime': bars[-1][0],
-                    'price': bars[-1][4],
                     'type': 'Exit'
                 }
 
-                # send the sell order
-                signal = SignalEvent(information=information)
-                self.events.put(signal)
-
-                # update current position
-                self.CurrentPosition = []
+                return information

@@ -89,6 +89,10 @@ class BinanceReader:
         # convert date column into dates
         df = df.set_index('dateopen', drop=True)
 
+        # clean the columns
+        for i in ['open', 'high', 'low', 'close']:
+            df[i] = df[i].astype(float)
+
         # fill empty values and cleaning
         # df = df[pd.to_numeric(df['close'], errors='coerce').notnull()]
         # df = df.fillna(method='ffill')
