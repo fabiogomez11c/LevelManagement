@@ -58,19 +58,21 @@ class BinanceReader:
         self.latest_symbol_data = []
         self.client = client
         self.symbol = symbol
+        self.data = {}
         self.timeframe = time_frame
         if self.timeframe is None:
             self.timeframe = '1d'
 
-        self.get_data()
+        for i in self.symbol:
+            self.get_data(i)
 
-    def get_data(self):
+    def get_data(self, symbol):
 
         # get a response from binance
         start_time = dt.datetime.now() - (dt.timedelta(seconds=convert_to_seconds(self.timeframe))*40)
         start_time = start_time.strftime(format='%Y-%m-%d %H:%M')
         resp = self.client.get_historical_klines(
-            symbol=self.symbol,
+            symbol=symbol,
             interval=CONSTANTS[self.timeframe],
             start_str=start_time,
         )
@@ -112,7 +114,7 @@ class BinanceReader:
         #     df = df.loc[df.index <= self.to_date]
 
         # compute indicators
-        self.data = self._compute_indicators(df)
+        self.data[symbol] = self._compute_indicators(df)
 
         # clean the information for the backtester
         # self.data_df = df.copy()  # storing in other property the dataframe

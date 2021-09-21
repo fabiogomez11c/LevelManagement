@@ -7,13 +7,12 @@ class Strategy:
         # store the parameters
         self.parent = parent
 
-    def compute_signal(self, position):
+    def compute_signal(self, position, symbol):
 
         information = None
 
         # get the bars needed
-        bars = self.parent.data.data.iloc[-2:].to_numpy()
-        # bars = self.data.get_latest_bars(2)
+        bars = self.parent.data.data[symbol].iloc[-2:].to_numpy()
 
         if len(bars) < 2:
             return
