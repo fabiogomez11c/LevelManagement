@@ -41,8 +41,10 @@ class LiveTrading:
         return self.last_datetime == self.data.data.iloc[-1].name
     
     def run(self):
+        print('ALGORITHM RUNNING...')
 
         while True:
+
 
             time.sleep(1)
 
@@ -52,6 +54,7 @@ class LiveTrading:
             # check if we already have new data
             if self._check_last_datetime():
                 continue
+            print('Last datetime:', self.data.data.iloc[-1].name)
             self._update_last_datetime()
 
             # get the existing positions
