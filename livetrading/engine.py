@@ -12,9 +12,9 @@ class LiveTrading:
         self.event = queue.Queue()
         self.last_datetime = None
         self.symbol = symbol
-        self.contra = dict((i, i[0:3]) for i in self.symbol)
+        self.contra = dict((i, i[:-3]) for i in self.symbol)
         # self.contra = symbol[0:3]
-        self.base = dict((i, i[3::]) for i in self.symbol)
+        self.base = dict((i, i[-3::]) for i in self.symbol)
         # self.base = symbol[3::]
         self.quantity = baseQuantity
         
