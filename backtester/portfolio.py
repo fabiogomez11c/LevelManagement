@@ -1,5 +1,6 @@
 
 from queue import Queue
+from typing_extensions import final
 
 from backtester.events import OrderEvent, FillEvent, SignalEvent, MarketEvent
 from backtester.data import CSVReader, TwelveData
@@ -33,6 +34,9 @@ class Backtester:
         self.buy_hold_returns = []
         self.returns_dates = []
 
+        # clean the log file
+        open('./backtester/log.txt', 'w').close()
+
         self.trades = pd.DataFrame()
 
         # create the queue object
@@ -42,6 +46,26 @@ class Backtester:
         # self.data = CSVReader(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame)
         self.data = TwelveData(self.event, from_date=from_date, to_date=to_date, time_frame=time_frame,
             symbol=self.symbol)
+    
+    def _log(self, message):
+        bars = self.data.get_latest_bars(1)
+        timestamp = str(bars[-1][0])
+        finalMessage = timestamp + ' | ' + message
+
+        print(finalMessage)
+
+        with open('./backtester/log.txt', 'a') as f:
+            f.write(finalMessage + '\n')
+            f.close()
+    
+    def _market_message(self):
+
+        message = ''
+
+        bars = self.data.get_latest_bars(1)[-1]
+        message = f'{self.symbol} | Open: {bars[1]}, High: {bars[2]}, Low: {bars[3]}, Close: {bars[4]}, c/r fib: {bars[5]}, c/r fast: {bars[6]}, fib_pred: {bars[7]}, fast_pred: {bars[8]}, fast_ma: {bars[9]}, slow_pred: {bars[10]}, high_pred: {bars[11]}'
+
+        return message
 
     def run_backtest(self):
         """
@@ -76,7 +100,8 @@ class Backtester:
                     if the_event.type == 'MARKET':
                         # check market data with strategy
                         strategy.compute_signal(the_event)
-                        self.update_from_market(the_event)
+                        self.update_from_market()
+                        self._log(self._market_message())
                     # check if signal to trade
                     if the_event.type == 'SIGNAL':
                         self.update_from_signal(the_event)
@@ -89,7 +114,7 @@ class Backtester:
         # get and clean the trades
         self.trades = pd.DataFrame(self.closed_trades)
     
-    def update_from_market(self, event: MarketEvent):
+    def update_from_market(self):
 
         bars = self.data.get_latest_bars(2)
 
