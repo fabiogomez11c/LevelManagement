@@ -55,10 +55,12 @@ class LiveTrading:
         message = ''
 
         bars = self.data.data[symbol].iloc[-1:].to_numpy()[0]
-        # bars = self.data.get_latest_bars(1)[-1]
         message = f'{symbol} | Open: {bars[0]}, High: {bars[1]}, Low: {bars[2]}, Close: {bars[3]}, c/r fib: {bars[6]}, c/r fast: {bars[7]}, fib_pred: {bars[8]}, fast_pred: {bars[9]}, fast_ma: {bars[10]}, slow_pred: {bars[11]}, high_pred: {bars[12]}'
 
         return message
+    
+    def _order_message(self, message, symbol):
+        return symbol + ' | ORDER: ' + str(message)
 
     def _update_last_datetime(self, symbol):
         self.last_datetime = self.data.data[symbol].iloc[-1].name
@@ -82,8 +84,6 @@ class LiveTrading:
                     if self._check_last_datetime(s):
                         continue
                     else:
-                        # print(str(self.data.data[s].iloc[-1:].index[0]))
-                        # print(self.data.data[s].iloc[-1:].to_numpy())
                         break
                 
             # loop for symbols
@@ -101,15 +101,15 @@ class LiveTrading:
                 # send orders
                 if info is not None:
                     if info['type'] == 'Long':
-                        print(f'Sending a buy order for {s}')
                         qty = self.getUSDprices(s)
+                        self._log({'type': 'long', 'quantity': qty}, s)
                         self.client.order_market_buy(
                             symbol=s,
                             quantity=qty
                         )
                     elif info['type'] == 'Exit':
                         qty = contra
-                        print(f'Sending a close order for {s}')
+                        self._log({'type': 'short', 'quantity': qty}, s)
                         self.client.order_market_sell(
                             symbol=s,
                             quantity=qty
