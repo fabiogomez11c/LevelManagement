@@ -66,7 +66,11 @@ class Backtester:
         message = f'{self.symbol} | Open: {bars[1]}, High: {bars[2]}, Low: {bars[3]}, Close: {bars[4]}, c/r fib: {bars[5]}, c/r fast: {bars[6]}, fib_pred: {bars[7]}, fast_pred: {bars[8]}, fast_ma: {bars[9]}, slow_pred: {bars[10]}, high_pred: {bars[11]}'
 
         return message
+    
+    def _order_message(self, message):
 
+        return self.symbol + ' | ORDER: ' + str(message)
+ 
     def run_backtest(self):
         """
         This method runs the backtesting loop, it is designed to work with/without
@@ -159,6 +163,8 @@ class Backtester:
             self.open_trades['Entry Price'] = information['price'] * (1 + self.commision)
             self.open_trades['Type'] = information['type']
 
+            self._log(self._order_message(self.open_trades))
+
         elif 'Exit' in information['type']:
 
             # we only have one open position
@@ -169,6 +175,8 @@ class Backtester:
             # % PnL computation
             self.open_trades['Profit/Loss in %'] = \
                 (self.open_trades['Exit Price'] / self.open_trades['Entry Price'] - 1) * 100
+
+            self._log(self._order_message(self.open_trades))
 
             # storing and cleaning
             self.closed_trades.append(self.open_trades)
