@@ -50,7 +50,7 @@ class Backtester:
     def _log(self, message):
         bars = self.data.get_latest_bars(1)
         timestamp = str(bars[-1][0])
-        finalMessage = timestamp + ' | ' + message
+        finalMessage = timestamp + ' | ' + str(message)
 
         print(finalMessage)
 
