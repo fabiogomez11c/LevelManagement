@@ -42,7 +42,7 @@ class LiveTrading:
     
     def _log(self, message, symbol):
         timestamp = self.data.data[symbol].iloc[-1:].index[0]
-        finalMessage = str(timestamp) + ' | ' + message
+        finalMessage = str(timestamp) + ' | ' + str(message)
 
         print(finalMessage)
 
