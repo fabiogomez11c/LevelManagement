@@ -231,6 +231,10 @@ class TwelveData:
         self.latest_symbol_data = []
         self.continue_backtest = True
         self.from_date = from_date
+        self.buffer_date = dt.datetime.strptime(
+                self.from_date, 
+                "%Y-%m-%d"
+            ) - dt.timedelta(days=60)
         if self.from_date is None:
             self.from_date = ''
         self.to_date = to_date
@@ -250,7 +254,7 @@ class TwelveData:
         df = td.time_series(
             symbol=self.symbol,
             interval=self.timeframe,
-            start_date=self.from_date,
+            start_date=self.buffer_date,
             end_date=self.to_date,
             outputsize=5000
         ).as_pandas()
@@ -259,6 +263,7 @@ class TwelveData:
 
         # compute indicators
         self._compute_indicators(df)
+        df = df.loc[df.index >= self.from_date]
 
         # clean the information for the backtester
         self.data_df = df.copy()  # storing in other property the dataframe

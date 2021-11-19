@@ -69,7 +69,7 @@ class BinanceReader:
     def get_data(self, symbol):
 
         # get a response from binance
-        start_time = dt.datetime.now() - (dt.timedelta(seconds=convert_to_seconds(self.timeframe))*40)
+        start_time = dt.datetime.now() - (dt.timedelta(seconds=convert_to_seconds(self.timeframe))*100)
         start_time = start_time.strftime(format='%Y-%m-%d %H:%M')
         resp = self.client.get_historical_klines(
             symbol=symbol,
